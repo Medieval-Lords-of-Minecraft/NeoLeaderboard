@@ -1,0 +1,21 @@
+name: NeoLeaderboard
+main: me.neoblade298.neoleaderboard.NeoLeaderboard
+author: [Neoblade298]
+depend: [NeoCore]
+softdepend: [NeoBossInstances, Towny]
+version: 1.0
+api-version: 1.16
+commands:
+   nations:
+      description: Base command for nations
+      usage: /nations
+   nl:
+      description: Base command for nation leaderboard
+      usage: /nl
+   nladmin:
+      description: Admin command for nation leaderboard
+      usage: /nla
+      aliases: [nla]
+   nlc:
+      description: Base command for nation leaderboard categories
+      usage: /nlc
