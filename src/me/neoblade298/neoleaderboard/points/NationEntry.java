@@ -3,6 +3,9 @@ package me.neoblade298.neoleaderboard.points;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import org.bukkit.Bukkit;
+
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -191,8 +194,18 @@ public class NationEntry implements Comparable<NationEntry> {
 			return -1;
 		}
 		else {
-			// Since we sort in descending, this will make it ascending
-			return o.getNation().getName().compareTo(this.getNation().getName());
+			if (o.getNation() == null) {
+				Bukkit.getLogger().warning("[NeoLeaderboard] Failed to load nation entry, nation of UUID " + o.getUuid() + " is null");
+				return 1;
+			}
+			else if (this.getNation() == null) {
+				Bukkit.getLogger().warning("[NeoLeaderboard] Failed to load nation entry, nation of UUID " + this.getUuid() + " is null");
+				return -1;
+			}
+			else {
+				// Since we sort in descending, this will make it ascending
+				return o.getNation().getName().compareTo(this.getNation().getName());
+			}
 		}
 	}
 	
