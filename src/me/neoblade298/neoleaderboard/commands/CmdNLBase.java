@@ -78,7 +78,7 @@ public class CmdNLBase implements Subcommand {
 				else {
 					try {
 						p = Bukkit.getOfflinePlayer(args[0]);
-						pe = PointsManager.loadPlayerEntry(p.getUniqueId(), NeoCore.getStatement());
+						pe = PointsManager.loadPlayerEntry(p.getUniqueId(), NeoCore.getStatement("PointsManager"));
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}

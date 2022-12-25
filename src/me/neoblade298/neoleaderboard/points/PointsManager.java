@@ -53,7 +53,7 @@ public class PointsManager implements IOComponent {
 			public void run() {
 				try {
 					// Initialize all nations
-					Statement stmt = NeoCore.getStatement();
+					Statement stmt = NeoCore.getStatement("PointsManager");
 					ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_nations");
 					while (rs.next()) {
 						UUID uuid = UUID.fromString(rs.getString(1));
@@ -79,7 +79,7 @@ public class PointsManager implements IOComponent {
 					rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players");
 					while (rs.next()) {
 						UUID uuid = UUID.fromString(rs.getString(1));
-						PlayerEntry pentry = loadPlayerEntry(uuid, NeoCore.getStatement());
+						PlayerEntry pentry = loadPlayerEntry(uuid, NeoCore.getStatement("PointsManager"));
 						if (pentry != null) {
 							playerEntries.put(uuid, pentry);
 						}
@@ -116,7 +116,7 @@ public class PointsManager implements IOComponent {
 		new BukkitRunnable() {
 			public void run() {
 				try {
-					Statement stmt = NeoCore.getStatement();
+					Statement stmt = NeoCore.getStatement("PointsManager");
 					ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players WHERE nation = '" + nuuid + "';");
 
 					while (rs.next()) {
@@ -150,7 +150,7 @@ public class PointsManager implements IOComponent {
 			new BukkitRunnable() {
 				public void run() {
 					try {
-						Statement stmt = NeoCore.getStatement();
+						Statement stmt = NeoCore.getStatement("PointsManager");
 						ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players WHERE town = '" + te.getTown().getUUID() + "';");
 
 						while (rs.next()) {
@@ -180,7 +180,7 @@ public class PointsManager implements IOComponent {
 			new BukkitRunnable() {
 				public void run() {
 					try {
-						Statement stmt = NeoCore.getStatement();
+						Statement stmt = NeoCore.getStatement("PointsManager");
 						stmt.addBatch("DELETE FROM neoleaderboard_playerpoints WHERE uuid = '" + player + "';");
 						stmt.addBatch("DELETE FROM neoleaderboard_contributed WHERE uuid = '" + player + "';");
 						stmt.addBatch("DELETE FROM neoleaderboard_players WHERE uuid = '" + player + "';");
@@ -234,7 +234,7 @@ public class PointsManager implements IOComponent {
 				}
 				else {
 					try {
-						Statement stmt = NeoCore.getStatement();
+						Statement stmt = NeoCore.getStatement("PointsManager");
 						ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_playerpoints WHERE uuid = '" + uuid + "';");
 						
 						// If this was a player's first points
@@ -310,16 +310,6 @@ public class PointsManager implements IOComponent {
 			Bukkit.getLogger().warning("[NeoLeaderboard] Failed to cleanup nations");
 			e.printStackTrace();
 		}
-	}
-	
-	@Override
-	public int getPriority() {
-		return -1;
-	}
-
-	@Override
-	public String getKey() {
-		return "PointsManager";
 	}
 
 	@Override
@@ -454,7 +444,7 @@ public class PointsManager implements IOComponent {
 	}
 	
 	public static void saveAll() {
-		Statement stmt = NeoCore.getStatement();
+		Statement stmt = NeoCore.getStatement("PointsManager");
 		TownyUniverse tu = TownyUniverse.getInstance();
 		for (NationEntry nent : nationEntries.values()) {
 			saveNation(tu.getNation(nent.getUuid()), stmt);
@@ -476,7 +466,7 @@ public class PointsManager implements IOComponent {
 			playerEntries.clear();
 			nationEntries.clear();
 
-			Statement delete = NeoCore.getStatement();
+			Statement delete = NeoCore.getStatement("PointsManager");
 			for (String db : dbs) {
 				delete.addBatch("DELETE FROM " + db + ";");
 			}
@@ -532,7 +522,7 @@ public class PointsManager implements IOComponent {
 				BungeeAPI.broadcast("&4[&c&lMLMC&4] &7This month's winner for top nation is: &6&l" + n.getName() + "&7!");
 				saveAll();
 				
-				Statement stmt = NeoCore.getStatement();
+				Statement stmt = NeoCore.getStatement("PointsManager");
 				
 				try {
 					for (String db : dbs) {

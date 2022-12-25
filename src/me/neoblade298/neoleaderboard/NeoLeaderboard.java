@@ -21,7 +21,7 @@ public class NeoLeaderboard extends JavaPlugin {
 		inst = this;
 		
 		if (NeoCore.getInstanceType() != InstanceType.SESSIONS) {
-			NeoCore.registerIOComponent(this, new PointsManager());
+			NeoCore.registerIOComponent(this, new PointsManager(), "PointsManager");
 
 			PointsManager.initialize();
 			initCommands();
