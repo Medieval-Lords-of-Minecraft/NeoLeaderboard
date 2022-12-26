@@ -20,9 +20,9 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 
-import me.neoblade298.neobossinstances.Boss;
-import me.neoblade298.neobossinstances.BossInstances;
 import me.neoblade298.neocore.bungee.PluginMessageEvent;
+import me.neoblade298.neocore.info.BossInfo;
+import me.neoblade298.neocore.info.InfoAPI;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.PlayerPointType;
 import me.neoblade298.neoleaderboard.points.PointsManager;
@@ -114,11 +114,9 @@ public class PointsListener implements Listener {
 	private void handleBossKillPM(ArrayList<String> msgs) {
 		UUID uuid = UUID.fromString(msgs.get(0));
 		String boss = msgs.get(1);
-		Boss b = BossInstances.getBoss(boss);
-		if (b != null) {
-			String ph = b.getPlaceholder();
-			double lv = Integer.parseInt(b.getPlaceholder().substring(ph.indexOf("Lv ") + 3, ph.indexOf(']'))); 
-			PointsManager.addPlayerPoints(uuid, KILL_BOSS_BASE_POINTS * lv, PlayerPointType.KILL_BOSS);
+		BossInfo bi = InfoAPI.getBossInfo(boss);
+		if (bi != null) {
+			PointsManager.addPlayerPoints(uuid, KILL_BOSS_BASE_POINTS * bi.getLevel(false), PlayerPointType.KILL_BOSS);
 		}
 	}
 	
