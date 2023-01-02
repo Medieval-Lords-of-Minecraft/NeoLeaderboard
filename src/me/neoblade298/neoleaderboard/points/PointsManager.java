@@ -40,7 +40,7 @@ public class PointsManager implements IOComponent {
 	private static final double MAX_PLAYER_CONTRIBUTION = 1000;
 	private static final DecimalFormat df = new DecimalFormat("##.00");
 	private static List<String> dbs = Arrays.asList("neoleaderboard_nations", "neoleaderboard_contributed", "neoleaderboard_nationpoints",
-			"neoleaderboard_players", "neoleaderboard_towns");
+			"neoleaderboard_players", "neoleaderboard_playerpoints");
 	
 	public static void initialize() {
 		// Ground rules:
