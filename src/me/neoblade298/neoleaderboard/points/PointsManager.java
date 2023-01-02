@@ -108,7 +108,7 @@ public class PointsManager implements IOComponent {
 	// To delete NationEntry, just remove from pointsmanager
 	// To delete TownEntry, must clear NationEntry and PlayerEntries
 	public static void deleteNationEntry(UUID nuuid) {
-		NationEntry ne = nationEntries.get(nuuid);
+		NationEntry ne = nationEntries.remove(nuuid);
 		for (TownEntry te : ne.getTopTowns()) {
 			deleteTownEntry(te, false);
 		}
@@ -474,6 +474,7 @@ public class PointsManager implements IOComponent {
 			for (Nation n : TownyUniverse.getInstance().getNations()) {
 				nationEntries.putIfAbsent(n.getUUID(), new NationEntry(n.getUUID()));
 			}
+			delete.executeBatch();
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
@@ -487,7 +488,7 @@ public class PointsManager implements IOComponent {
 				if (n1.getTotalPoints() > n2.getTotalPoints()) {
 					return 1;
 				}
-				else if (n1.getTotalPoints() > n2.getTotalPoints()) {
+				else if (n1.getTotalPoints() < n2.getTotalPoints()) {
 					return -1;
 				}
 				else {
@@ -517,19 +518,22 @@ public class PointsManager implements IOComponent {
 				for (NationEntry ne : nationEntries.values()) {
 					sorted.add(ne);
 				}
-				NationEntry winner = sorted.first();
+				NationEntry winner = sorted.last();
 				Nation n = winner.getNation();
 				BungeeAPI.broadcast("&4[&c&lMLMC&4] &7This month's winner for top nation is: &6&l" + n.getName() + "&7!");
 				saveAll();
 				
 				Statement stmt = NeoCore.getStatement("PointsManager");
+				Statement delete = NeoCore.getStatement("PointsManager");
 				
 				try {
 					for (String db : dbs) {
+						delete.addBatch(createDeleteQuery(db));
 						stmt.addBatch(createCopyQuery(db));
 					}
 					stmt.addBatch("INSERT INTO neoleaderboard_previous_winner VALUES('" + n.getName() + "'," + winner.getTotalPoints() + "," 
 							+ System.currentTimeMillis() + ");");
+					delete.executeBatch();
 					stmt.executeBatch();
 					
 					reset();
@@ -551,6 +555,12 @@ public class PointsManager implements IOComponent {
 		String[] args = db.split("_");
 		String prevDb = args[0] + "_previous_" + args[1];
 		return "INSERT INTO " + prevDb + " (SELECT * FROM " + db + ");"; 
+	}
+	
+	private static String createDeleteQuery(String db) {
+		String[] args = db.split("_");
+		String prevDb = args[0] + "_previous_" + args[1];
+		return "DELETE FROM " + prevDb + ";"; 
 	}
 	
 	// Normally only called on startup, if you want it called for other reasons
