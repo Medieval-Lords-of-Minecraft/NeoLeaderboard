@@ -8,10 +8,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Nation;
 
-import me.neoblade298.neocore.commands.CommandArgument;
-import me.neoblade298.neocore.commands.CommandArguments;
-import me.neoblade298.neocore.commands.Subcommand;
-import me.neoblade298.neocore.commands.SubcommandRunner;
+import me.neoblade298.neocore.bukkit.commands.CommandArgument;
+import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neocore.util.Util;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.NationEntry;

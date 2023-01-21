@@ -20,9 +20,9 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 
-import me.neoblade298.neocore.bungee.PluginMessageEvent;
-import me.neoblade298.neocore.info.BossInfo;
-import me.neoblade298.neocore.info.InfoAPI;
+import me.neoblade298.neocore.bukkit.bungee.PluginMessageEvent;
+import me.neoblade298.neocore.bukkit.info.BossInfo;
+import me.neoblade298.neocore.bukkit.info.InfoAPI;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.PlayerPointType;
 import me.neoblade298.neoleaderboard.points.PointsManager;

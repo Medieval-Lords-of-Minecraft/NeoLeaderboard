@@ -3,9 +3,9 @@ package me.neoblade298.neoleaderboard;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.neoblade298.neocore.NeoCore;
-import me.neoblade298.neocore.commands.CommandManager;
-import me.neoblade298.neocore.instancing.InstanceType;
+import me.neoblade298.neocore.bukkit.InstanceType;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.commands.CommandManager;
 import me.neoblade298.neoleaderboard.commands.*;
 import me.neoblade298.neoleaderboard.listeners.InstanceListener;
 import me.neoblade298.neoleaderboard.listeners.PointsListener;

@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import me.neoblade298.neocore.bungee.BungeeAPI;
+import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
 
 public class InstanceListener implements Listener {
 	private HashMap<Player, Long> playtime = new HashMap<Player, Long>();

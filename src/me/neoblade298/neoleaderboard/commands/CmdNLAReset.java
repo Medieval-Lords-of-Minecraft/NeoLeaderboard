@@ -1,9 +1,9 @@
 package me.neoblade298.neoleaderboard.commands;
 
 import org.bukkit.command.CommandSender;
-import me.neoblade298.neocore.commands.CommandArguments;
-import me.neoblade298.neocore.commands.Subcommand;
-import me.neoblade298.neocore.commands.SubcommandRunner;
+import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
 import me.neoblade298.neoleaderboard.points.PointsManager;
 
 public class CmdNLAReset implements Subcommand {

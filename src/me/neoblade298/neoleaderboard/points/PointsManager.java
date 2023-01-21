@@ -25,10 +25,10 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 
-import me.neoblade298.neocore.NeoCore;
-import me.neoblade298.neocore.bungee.BungeeAPI;
-import me.neoblade298.neocore.io.IOComponent;
-import me.neoblade298.neocore.io.IOType;
+import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neocore.bukkit.bungee.BungeeAPI;
+import me.neoblade298.neocore.bukkit.io.IOComponent;
+import me.neoblade298.neocore.shared.io.IOType;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.previous.PreviousPointsManager;
 
