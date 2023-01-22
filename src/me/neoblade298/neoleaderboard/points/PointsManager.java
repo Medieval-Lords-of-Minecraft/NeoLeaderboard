@@ -77,9 +77,10 @@ public class PointsManager implements IOComponent {
 					
 					// Initialize all players
 					rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players");
+					Statement loadPlayers = NeoCore.getStatement("PointsManager");
 					while (rs.next()) {
 						UUID uuid = UUID.fromString(rs.getString(1));
-						PlayerEntry pentry = loadPlayerEntry(uuid, stmt);
+						PlayerEntry pentry = loadPlayerEntry(uuid, loadPlayers);
 						if (pentry != null) {
 							playerEntries.put(uuid, pentry);
 						}
