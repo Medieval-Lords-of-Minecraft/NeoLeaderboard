@@ -24,7 +24,7 @@ public class PreviousPointsManager {
 		new BukkitRunnable() {
 			public void run() {
 				// Grab the top 10 for everything
-				Statement stmt = NeoCore.getStatement();
+				Statement stmt;
 				try {
 					ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_previous_nations WHERE category = 'TOTAL';");
 					while (rs.next()) {

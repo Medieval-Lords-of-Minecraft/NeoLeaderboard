@@ -12,7 +12,7 @@ import me.neoblade298.neocore.bukkit.commands.CommandArgument;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.NationEntry;
 import me.neoblade298.neoleaderboard.points.PlayerEntry;
@@ -56,7 +56,7 @@ public class CmdNLNation implements Subcommand {
 	public void run(CommandSender s, String[] args) {
 		Nation n = TownyUniverse.getInstance().getNation(args[0]);
 		if (n == null) {
-			Util.msg(s, "&cThis nation doesn't exist!");
+			BukkitUtil.msg(s, "&cThis nation doesn't exist!");
 			return;
 		}
 

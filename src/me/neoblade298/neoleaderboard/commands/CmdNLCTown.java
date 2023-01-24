@@ -13,7 +13,7 @@ import me.neoblade298.neocore.bukkit.commands.CommandArgument;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.NationEntry;
 import me.neoblade298.neoleaderboard.points.PlayerEntry;
@@ -59,18 +59,18 @@ public class CmdNLCTown implements Subcommand {
 	public void run(CommandSender s, String[] args) {
 		Town t = TownyUniverse.getInstance().getTown(args[0]);
 		if (t == null) {
-			Util.msg(s, "&cThis town doesn't exist!");
+			BukkitUtil.msg(s, "&cThis town doesn't exist!");
 			return;
 		}
 		Nation n = t.getNationOrNull();
 		if (n == null) {
-			Util.msg(s, "&cThis town doesn't have a nation!");
+			BukkitUtil.msg(s, "&cThis town doesn't have a nation!");
 			return;
 		}
 		NationEntry ne = PointsManager.getNationEntry(n.getUUID());
 		TownEntry te = ne.getTownEntry(t.getUUID());
 		if (te == null) {
-			Util.msg(s, "&cThis town hasn't contributed anything yet!");
+			BukkitUtil.msg(s, "&cThis town hasn't contributed anything yet!");
 			return;
 		}
 		
@@ -80,7 +80,7 @@ public class CmdNLCTown implements Subcommand {
 				type = PlayerPointType.valueOf(args[1].toUpperCase());
 			}
 			catch (IllegalArgumentException ex) {
-				Util.msg(s, "&cThis category doesn't exist!");
+				BukkitUtil.msg(s, "&cThis category doesn't exist!");
 				return;
 			}
 		}

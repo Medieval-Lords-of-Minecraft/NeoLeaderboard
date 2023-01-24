@@ -8,7 +8,7 @@ import me.neoblade298.neocore.bukkit.commands.CommandArgument;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 import me.neoblade298.neoleaderboard.points.PlayerPointType;
 import me.neoblade298.neoleaderboard.points.PointsManager;
 
@@ -48,20 +48,20 @@ public class CmdNLAAddPlayer implements Subcommand {
 			type = PlayerPointType.valueOf(args[1].toUpperCase());
 		}
 		catch (IllegalArgumentException ex) {
-			Util.msg(s, "&cInvalid type! Valid types are:");
+			BukkitUtil.msg(s, "&cInvalid type! Valid types are:");
 			for (PlayerPointType t : PlayerPointType.values()) {
-				Util.msg(s, "&7- &c" + t);
+				BukkitUtil.msg(s, "&7- &c" + t);
 			}
 			return;
 		}
 		Player p = Bukkit.getPlayer(args[0]);
 		if (p == null) {
-			Util.msg(s, "&cPlayer is not currently online!");
+			BukkitUtil.msg(s, "&cPlayer is not currently online!");
 			return;
 		}
 		
 		int amount = Integer.parseInt(args[2]);
 		PointsManager.addPlayerPoints(p.getUniqueId(), amount, type);
-		Util.msg(s, "&7Successfully added &e" + amount + " &6" + type + " &7points to player &c" + p.getName());
+		BukkitUtil.msg(s, "&7Successfully added &e" + amount + " &6" + type + " &7points to player &c" + p.getName());
 	}
 }

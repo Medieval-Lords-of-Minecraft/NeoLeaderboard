@@ -1,6 +1,8 @@
 package me.neoblade298.neoleaderboard.commands;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import org.bukkit.Bukkit;
@@ -16,7 +18,7 @@ import me.neoblade298.neocore.bukkit.commands.CommandArgument;
 import me.neoblade298.neocore.bukkit.commands.CommandArguments;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.util.Util;
+import me.neoblade298.neocore.bukkit.util.BukkitUtil;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.PlayerEntry;
 import me.neoblade298.neoleaderboard.points.PlayerPointType;
@@ -59,7 +61,7 @@ public class CmdNLBase implements Subcommand {
 		new BukkitRunnable() {
 			public void run() {
 				if (args.length == 0 && !(s instanceof Player)) {
-					Util.msg(s, "&cYou can't use this command on yourself as console!");
+					BukkitUtil.msg(s, "&cYou can't use this command on yourself as console!");
 					return;
 				}
 				
@@ -76,21 +78,22 @@ public class CmdNLBase implements Subcommand {
 					 pe = PointsManager.getPlayerEntry(p.getUniqueId());
 				}
 				else {
-					try {
+					try (Connection con = NeoCore.getConnection("PointsManager");
+							Statement stmt = con.createStatement();){
 						p = Bukkit.getOfflinePlayer(args[0]);
-						pe = PointsManager.loadPlayerEntry(p.getUniqueId(), NeoCore.getStatement("PointsManager"));
+						pe = PointsManager.loadPlayerEntry(p.getUniqueId(), stmt);
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
 				}
 				
 				if (pe == null) {
-					Util.msg(s, "&cThis player hasn't contributed anything yet!");
+					BukkitUtil.msg(s, "&cThis player hasn't contributed anything yet!");
 					return;
 				}
 				Resident r = TownyAPI.getInstance().getResident(pe.getUuid());
 				if (r.getNationOrNull() == null) {
-					Util.msg(s, "&cThis player isn't in a nation!");
+					BukkitUtil.msg(s, "&cThis player isn't in a nation!");
 					return;
 				}
 				HashMap<PlayerPointType, Double> cpoints = pe.getContributedPoints();

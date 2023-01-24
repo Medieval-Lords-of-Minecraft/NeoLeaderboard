@@ -1,5 +1,6 @@
 package me.neoblade298.neoleaderboard.points;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -51,9 +52,9 @@ public class PointsManager implements IOComponent {
 		
 		new BukkitRunnable() {
 			public void run() {
-				try {
+				try (Connection con = NeoCore.getConnection("PointsManager");
+						Statement stmt = con.createStatement();){
 					// Initialize all nations
-					Statement stmt = NeoCore.getStatement("PointsManager");
 					ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_nations");
 					while (rs.next()) {
 						UUID uuid = UUID.fromString(rs.getString(1));
@@ -77,15 +78,16 @@ public class PointsManager implements IOComponent {
 					
 					// Initialize all players
 					rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players");
-					Statement loadPlayers = NeoCore.getStatement("PointsManager");
-					while (rs.next()) {
-						UUID uuid = UUID.fromString(rs.getString(1));
-						PlayerEntry pentry = loadPlayerEntry(uuid, loadPlayers);
-						if (pentry != null) {
-							playerEntries.put(uuid, pentry);
-						}
-						else {
-							Bukkit.getLogger().warning("[NeoLeaderboard] Failed to initialize player " + uuid);
+					try (Statement loadPlayers = con.createStatement()) {
+						while (rs.next()) {
+							UUID uuid = UUID.fromString(rs.getString(1));
+							PlayerEntry pentry = loadPlayerEntry(uuid, loadPlayers);
+							if (pentry != null) {
+								playerEntries.put(uuid, pentry);
+							}
+							else {
+								Bukkit.getLogger().warning("[NeoLeaderboard] Failed to initialize player " + uuid);
+							}
 						}
 					}
 					
@@ -93,6 +95,7 @@ public class PointsManager implements IOComponent {
 					rs = stmt.executeQuery("SELECT * FROM neoleaderboard_previous_winner ORDER BY timestamp DESC");
 					rs.next();
 					prevWinner = rs.getString("name");
+					rs.close();
 					
 					// Calculate player points
 					calculatePoints();
@@ -116,9 +119,9 @@ public class PointsManager implements IOComponent {
 		
 		new BukkitRunnable() {
 			public void run() {
-				try {
-					Statement stmt = NeoCore.getStatement("PointsManager");
-					ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players WHERE nation = '" + nuuid + "';");
+				try (Connection con = NeoCore.getConnection("PointsManager");
+						Statement stmt = con.createStatement();
+						ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players WHERE nation = '" + nuuid + "';");){
 
 					while (rs.next()) {
 						UUID uuid = UUID.fromString(rs.getString(1));
@@ -150,9 +153,9 @@ public class PointsManager implements IOComponent {
 		if (deleteFromSql) {
 			new BukkitRunnable() {
 				public void run() {
-					try {
-						Statement stmt = NeoCore.getStatement("PointsManager");
-						ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players WHERE town = '" + te.getTown().getUUID() + "';");
+					try (Connection con = NeoCore.getConnection("PointsManager");
+							Statement stmt = con.createStatement();
+							ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_players WHERE town = '" + te.getTown().getUUID() + "';");) {
 
 						while (rs.next()) {
 							UUID uuid = UUID.fromString(rs.getString(1));
@@ -180,8 +183,8 @@ public class PointsManager implements IOComponent {
 		if (deleteFromSql) {
 			new BukkitRunnable() {
 				public void run() {
-					try {
-						Statement stmt = NeoCore.getStatement("PointsManager");
+					try (Connection con = NeoCore.getConnection("PointsManager");
+							Statement stmt = con.createStatement()) {
 						stmt.addBatch("DELETE FROM neoleaderboard_playerpoints WHERE uuid = '" + player + "';");
 						stmt.addBatch("DELETE FROM neoleaderboard_contributed WHERE uuid = '" + player + "';");
 						stmt.addBatch("DELETE FROM neoleaderboard_players WHERE uuid = '" + player + "';");
@@ -234,8 +237,8 @@ public class PointsManager implements IOComponent {
 					
 				}
 				else {
-					try {
-						Statement stmt = NeoCore.getStatement("PointsManager");
+					try (Connection con = NeoCore.getConnection("PointsManager");
+							Statement stmt = con.createStatement();) {
 						ResultSet rs = stmt.executeQuery("SELECT * FROM neoleaderboard_playerpoints WHERE uuid = '" + uuid + "';");
 						
 						// If this was a player's first points
@@ -445,29 +448,34 @@ public class PointsManager implements IOComponent {
 	}
 	
 	public static void saveAll() {
-		Statement stmt = NeoCore.getStatement("PointsManager");
-		TownyUniverse tu = TownyUniverse.getInstance();
-		for (NationEntry nent : nationEntries.values()) {
-			saveNation(tu.getNation(nent.getUuid()), stmt);
+		try (Connection con = NeoCore.getConnection("PointsManager");
+				Statement stmt = con.createStatement();) {
+			TownyUniverse tu = TownyUniverse.getInstance();
+			for (NationEntry nent : nationEntries.values()) {
+				saveNation(tu.getNation(nent.getUuid()), stmt);
+			}
+			
+			for (PlayerEntry pe : playerEntries.values()) {
+				try {
+					savePlayerData(pe, stmt);
+					stmt.executeBatch();
+				}
+				catch (SQLException e) {
+					Bukkit.getLogger().warning("[NeoLeaderboard] Failed to save player " + pe.getDisplay());
+					e.printStackTrace();
+				}
+			}
 		}
-		for (PlayerEntry pe : playerEntries.values()) {
-			try {
-				savePlayerData(pe, stmt);
-				stmt.executeBatch();
-			}
-			catch (SQLException e) {
-				Bukkit.getLogger().warning("[NeoLeaderboard] Failed to save player " + pe.getDisplay());
-				e.printStackTrace();
-			}
+		catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	public static void reset() {
-		try {
+		try (Connection con = NeoCore.getConnection("PointsManager");
+				Statement delete = con.createStatement();) {
 			playerEntries.clear();
 			nationEntries.clear();
-
-			Statement delete = NeoCore.getStatement("PointsManager");
 			for (String db : dbs) {
 				delete.addBatch("DELETE FROM " + db + ";");
 			}
@@ -524,10 +532,9 @@ public class PointsManager implements IOComponent {
 				BungeeAPI.broadcast("&4[&c&lMLMC&4] &7This month's winner for top nation is: &6&l" + n.getName() + "&7!");
 				saveAll();
 				
-				Statement stmt = NeoCore.getStatement("PointsManager");
-				Statement delete = NeoCore.getStatement("PointsManager");
-				
-				try {
+				try (Connection con = NeoCore.getConnection("PointsManager");
+						Statement stmt = con.createStatement();
+						Statement delete = con.createStatement();) {
 					for (String db : dbs) {
 						delete.addBatch(createDeleteQuery(db));
 						stmt.addBatch(createCopyQuery(db));
