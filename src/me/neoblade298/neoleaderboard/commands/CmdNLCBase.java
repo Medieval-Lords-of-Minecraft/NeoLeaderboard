@@ -1,9 +1,9 @@
 package me.neoblade298.neoleaderboard.commands;
 
 import org.bukkit.command.CommandSender;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neoleaderboard.points.NationPointType;
 import me.neoblade298.neoleaderboard.points.PlayerPointType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -12,32 +12,9 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
-public class CmdNLCBase implements Subcommand {
-	private static final CommandArguments args = new CommandArguments();
-
-	@Override
-	public String getDescription() {
-		return "Displays clickable list of categories";
-	}
-
-	@Override
-	public String getKey() {
-		return "";
-	}
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-	
-	@Override
-	public CommandArguments getArgs() {
-		return args;
+public class CmdNLCBase extends Subcommand {
+	public CmdNLCBase(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
 	}
 
 	@Override

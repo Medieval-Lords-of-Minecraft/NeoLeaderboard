@@ -1,6 +1,5 @@
 package me.neoblade298.neoleaderboard.commands;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -8,11 +7,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Nation;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.NationEntry;
 import me.neoblade298.neoleaderboard.points.PlayerPointType;
@@ -24,40 +22,17 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
-public class CmdNLCNation implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(Arrays.asList(
-			new CommandArgument("nation"), new CommandArgument("category", false)));
-
-	@Override
-	public String getDescription() {
-		return "Displays clickable list of categories";
-	}
-
-	@Override
-	public String getKey() {
-		return "nation";
-	}
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-	
-	@Override
-	public CommandArguments getArgs() {
-		return args;
+public class CmdNLCNation extends Subcommand {
+	public CmdNLCNation(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("nation"), new Arg("category", false));
 	}
 
 	@Override
 	public void run(CommandSender s, String[] args) {
 		Nation n = TownyUniverse.getInstance().getNation(args[0]);
 		if (n == null) {
-			BukkitUtil.msg(s, "&cThis nation doesn't exist!");
+			Util.msg(s, "&cThis nation doesn't exist!");
 			return;
 		}
 		PlayerPointType type = null;
@@ -66,7 +41,7 @@ public class CmdNLCNation implements Subcommand {
 				type = PlayerPointType.valueOf(args[1].toUpperCase());
 			}
 			catch (IllegalArgumentException ex) {
-				BukkitUtil.msg(s, "&cThis category doesn't exist!");
+				Util.msg(s, "&cThis category doesn't exist!");
 				return;
 			}
 		}

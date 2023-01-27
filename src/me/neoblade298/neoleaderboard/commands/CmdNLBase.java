@@ -14,11 +14,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.PlayerEntry;
 import me.neoblade298.neoleaderboard.points.PlayerPointType;
@@ -26,32 +25,10 @@ import me.neoblade298.neoleaderboard.points.PointsManager;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 
-public class CmdNLBase implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(new CommandArgument("player", false));
-
-	@Override
-	public String getDescription() {
-		return null;
-	}
-
-	@Override
-	public String getKey() {
-		return "";
-	}
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-	
-	@Override
-	public CommandArguments getArgs() {
-		return args;
+public class CmdNLBase extends Subcommand {
+	public CmdNLBase(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("player", false));
 	}
 
 	@SuppressWarnings("deprecation") // Need to get uuid of offline player
@@ -61,7 +38,7 @@ public class CmdNLBase implements Subcommand {
 		new BukkitRunnable() {
 			public void run() {
 				if (args.length == 0 && !(s instanceof Player)) {
-					BukkitUtil.msg(s, "&cYou can't use this command on yourself as console!");
+					Util.msg(s, "&cYou can't use this command on yourself as console!");
 					return;
 				}
 				
@@ -88,12 +65,12 @@ public class CmdNLBase implements Subcommand {
 				}
 				
 				if (pe == null) {
-					BukkitUtil.msg(s, "&cThis player hasn't contributed anything yet!");
+					Util.msg(s, "&cThis player hasn't contributed anything yet!");
 					return;
 				}
 				Resident r = TownyAPI.getInstance().getResident(pe.getUuid());
 				if (r.getNationOrNull() == null) {
-					BukkitUtil.msg(s, "&cThis player isn't in a nation!");
+					Util.msg(s, "&cThis player isn't in a nation!");
 					return;
 				}
 				HashMap<PlayerPointType, Double> cpoints = pe.getContributedPoints();

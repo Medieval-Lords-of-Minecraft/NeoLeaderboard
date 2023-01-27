@@ -1,37 +1,14 @@
 package me.neoblade298.neoleaderboard.commands;
 
 import org.bukkit.command.CommandSender;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neoleaderboard.points.PointsManager;
 
-public class CmdNLAFinalize implements Subcommand {
-	private static final CommandArguments args = new CommandArguments();
-
-	@Override
-	public String getDescription() {
-		return "Finalizes scores for the month";
-	}
-
-	@Override
-	public String getKey() {
-		return "finalize";
-	}
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-	
-	@Override
-	public CommandArguments getArgs() {
-		return args;
+public class CmdNLAFinalize extends Subcommand {
+	public CmdNLAFinalize(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
 	}
 
 	@Override

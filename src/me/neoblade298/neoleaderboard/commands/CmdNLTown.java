@@ -8,11 +8,10 @@ import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Town;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArgument;
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
-import me.neoblade298.neocore.bukkit.util.BukkitUtil;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.NationEntry;
 import me.neoblade298.neoleaderboard.points.PlayerEntry;
@@ -24,44 +23,22 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
-public class CmdNLTown implements Subcommand {
-	private static final CommandArguments args = new CommandArguments(new CommandArgument("town"));
-
-	@Override
-	public String getDescription() {
-		return null;
-	}
-
-	@Override
-	public String getKey() {
-		return "town";
-	}
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-	
-	@Override
-	public CommandArguments getArgs() {
-		return args;
+public class CmdNLTown extends Subcommand {
+	public CmdNLTown(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+		args.add(new Arg("town"));
 	}
 
 	@Override
 	public void run(CommandSender s, String[] args) {
 		Town t = TownyUniverse.getInstance().getTown(args[0]);
 		if (t == null) {
-			BukkitUtil.msg(s, "&cThis town doesn't exist!");
+			Util.msg(s, "&cThis town doesn't exist!");
 			return;
 		}
 		Nation n = t.getNationOrNull();
 		if (n == null) {
-			BukkitUtil.msg(s, "&cThis town isn't part of a nation!");
+			Util.msg(s, "&cThis town isn't part of a nation!");
 			return;
 		}
 		new BukkitRunnable() {

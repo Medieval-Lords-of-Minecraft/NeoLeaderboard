@@ -11,9 +11,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.neoblade298.neocore.bukkit.commands.CommandArguments;
+
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
-import me.neoblade298.neocore.bukkit.commands.SubcommandRunner;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neoleaderboard.NeoLeaderboard;
 import me.neoblade298.neoleaderboard.points.NationEntry;
 import me.neoblade298.neoleaderboard.points.PointsManager;
@@ -24,8 +24,11 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
-public class CmdNations implements Subcommand {
-	private static final CommandArguments args = new CommandArguments();
+public class CmdNations extends Subcommand {
+	public CmdNations(String key, String desc, String perm, SubcommandRunner runner) {
+		super(key, desc, perm, runner);
+	}
+
 	private static final Formatter fmt = new Formatter();
 	private static final String month;
 	
@@ -34,31 +37,6 @@ public class CmdNations implements Subcommand {
 		c.setTime(new Date());
 		c.add(Calendar.MONTH, -1);
 		month = fmt.format("%tB", c).toString();
-	}
-
-	@Override
-	public String getDescription() {
-		return null;
-	}
-
-	@Override
-	public String getKey() {
-		return "";
-	}
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
-	public SubcommandRunner getRunner() {
-		return SubcommandRunner.BOTH;
-	}
-	
-	@Override
-	public CommandArguments getArgs() {
-		return args;
 	}
 
 	@Override

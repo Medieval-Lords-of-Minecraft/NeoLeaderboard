@@ -5,7 +5,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.neoblade298.neocore.bukkit.InstanceType;
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neocore.bukkit.commands.CommandManager;
+import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
+import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neoleaderboard.commands.*;
 import me.neoblade298.neoleaderboard.listeners.InstanceListener;
 import me.neoblade298.neoleaderboard.listeners.PointsListener;
@@ -40,29 +41,28 @@ public class NeoLeaderboard extends JavaPlugin {
 	}
 	
 	private void initCommands() {
-		CommandManager mngr = new CommandManager("nations", this);
-		mngr.register(new CmdNations());
-		mngr.registerCommandList("help");
+		SubcommandManager mngr = new SubcommandManager("nations", null, ChatColor.RED, this);
+		mngr.register(new CmdNations("", null, null, SubcommandRunner.BOTH));
 		
-		mngr = new CommandManager("nl", this);
-		mngr.register(new CmdNLNation());
-		mngr.register(new CmdNLTown());
-		mngr.register(new CmdNLBase());
+		mngr = new SubcommandManager("nl", null, ChatColor.RED, this);
+		mngr.register(new CmdNLNation("nation", null, null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLTown("town", null, null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLBase("", null, null, SubcommandRunner.BOTH));
 		mngr.registerCommandList("help");
 
-		mngr = new CommandManager("nlc", this);
-		mngr.register(new CmdNLCBase());
-		mngr.register(new CmdNLCTop());
-		mngr.register(new CmdNLCNation());
-		mngr.register(new CmdNLCTown());
+		mngr = new SubcommandManager("nlc", null, ChatColor.RED, this);
+		mngr.register(new CmdNLCBase("", null, null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLCTop("top", null, null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLCNation("nation", null, null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLCTown("town", null, null, SubcommandRunner.BOTH));
 		mngr.registerCommandList("help");
 
-		mngr = new CommandManager("nladmin", "neoleaderboard.admin", ChatColor.DARK_RED, this);
+		mngr = new SubcommandManager("nladmin", "neoleaderboard.admin", ChatColor.DARK_RED, this);
 		mngr.registerCommandList("");
-		mngr.register(new CmdNLAAddPlayer());
-		mngr.register(new CmdNLAAddNation());
-		mngr.register(new CmdNLAFinalize());
-		mngr.register(new CmdNLAReset());
+		mngr.register(new CmdNLAAddPlayer("addplayer", "Add points to a player", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLAAddNation("addnation", "Add points to a nation", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLAFinalize("finalize", "Finalize nation points for the month", null, SubcommandRunner.BOTH));
+		mngr.register(new CmdNLAReset("reset", "Reset all points", null, SubcommandRunner.BOTH));
 	}
 	
 	public static NeoLeaderboard inst() {
