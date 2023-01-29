@@ -273,40 +273,49 @@ public class PointsManager implements IOComponent {
 		nationEntries.get(uuid).addNationPoints(amount, type);
 	}
 	
+	private static void saveNation(Nation n, Statement insert, boolean forceAsync) {
+		if (forceAsync) {
+			new BukkitRunnable() {
+				public void run() {
+					saveNation(n, insert);
+				}
+			}.runTaskAsynchronously(NeoLeaderboard.inst());
+		}
+		else {
+			saveNation(n, insert);
+		}
+	}
+	
 	private static void saveNation(Nation n, Statement insert) {
-		new BukkitRunnable() {
-			public void run() {
-				// Don't save same nation more than once every 10 seconds
-				NationEntry nent = nationEntries.getOrDefault(n.getUUID(), new NationEntry(n.getUUID()));
-				if (lastSaved.getOrDefault(nent.getUuid(), 0L) + 10000L > System.currentTimeMillis()) {
-					return;
-				}
-				lastSaved.put(nent.getUuid(), System.currentTimeMillis());
-				
-				try {
-					HashMap<NationPointType, Double> points = nent.getAllNationPoints();
+		// Don't save same nation more than once every 10 seconds
+		NationEntry nent = nationEntries.getOrDefault(n.getUUID(), new NationEntry(n.getUUID()));
+		if (lastSaved.getOrDefault(nent.getUuid(), 0L) + 10000L > System.currentTimeMillis()) {
+			return;
+		}
+		lastSaved.put(nent.getUuid(), System.currentTimeMillis());
+		
+		try {
+			HashMap<NationPointType, Double> points = nent.getAllNationPoints();
 
-					insert.addBatch("REPLACE INTO neoleaderboard_nations VALUES ('"
-										+ nent.getUuid() + "','" + n.getName() + "'," + nent.getContributors() + ");");
-					for (Entry<NationPointType, Double> e : points.entrySet()) {
-						insert.addBatch("REPLACE INTO neoleaderboard_nationpoints VALUES ('"
-											+ nent.getUuid() + "','" + e.getKey() + "'," + e.getValue() + ");");
-					}
-					insert.executeBatch();
-				}
-				catch (Exception e) {
-					Bukkit.getLogger().warning("[NeoLeaderboard] Failed to save nation " + n.getName() + " on cleanup.");
-					e.printStackTrace();
-				}
+			insert.addBatch("REPLACE INTO neoleaderboard_nations VALUES ('"
+								+ nent.getUuid() + "','" + n.getName() + "'," + nent.getContributors() + ");");
+			for (Entry<NationPointType, Double> e : points.entrySet()) {
+				insert.addBatch("REPLACE INTO neoleaderboard_nationpoints VALUES ('"
+									+ nent.getUuid() + "','" + e.getKey() + "'," + e.getValue() + ");");
 			}
-		}.runTaskAsynchronously(NeoLeaderboard.inst());
+			insert.executeBatch();
+		}
+		catch (Exception e) {
+			Bukkit.getLogger().warning("[NeoLeaderboard] Failed to save nation " + n.getName() + " on cleanup.");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void cleanup(Statement insert, Statement delete) {
 		TownyUniverse tu = TownyUniverse.getInstance();
 		for (NationEntry nent : nationEntries.values()) {
-			saveNation(tu.getNation(nent.getUuid()), insert);
+			saveNation(tu.getNation(nent.getUuid()), insert, false);
 		}
 		try {
 			insert.executeBatch();
@@ -389,7 +398,7 @@ public class PointsManager implements IOComponent {
 			if (n == null) return;
 			
 			savePlayerData(p.getUniqueId(), insert);
-			saveNation(n, insert); // Limited to once every 10 seconds per nation
+			saveNation(n, insert, false); // Limited to once every 10 seconds per nation
 			insert.executeBatch();
 		}
 		catch (Exception e) {
@@ -452,7 +461,7 @@ public class PointsManager implements IOComponent {
 				Statement stmt = con.createStatement();) {
 			TownyUniverse tu = TownyUniverse.getInstance();
 			for (NationEntry nent : nationEntries.values()) {
-				saveNation(tu.getNation(nent.getUuid()), stmt);
+				saveNation(tu.getNation(nent.getUuid()), stmt, true);
 			}
 			
 			for (PlayerEntry pe : playerEntries.values()) {
