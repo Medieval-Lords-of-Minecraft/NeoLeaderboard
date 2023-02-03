@@ -1,11 +1,15 @@
 package me.neoblade298.neoleaderboard;
 
+import java.time.LocalDateTime;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.neoblade298.neocore.bukkit.InstanceType;
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
+import me.neoblade298.neocore.bukkit.scheduler.ScheduleInterval;
+import me.neoblade298.neocore.bukkit.scheduler.SchedulerAPI;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neoleaderboard.commands.*;
 import me.neoblade298.neoleaderboard.listeners.InstanceListener;
@@ -29,10 +33,17 @@ public class NeoLeaderboard extends JavaPlugin {
 			
 			Bukkit.getPluginManager().registerEvents(new PointsListener(), this);
 			Bukkit.getPluginManager().registerEvents(new TownyListener(), this);
+
+			SchedulerAPI.scheduleRepeating("Leaderboard-finalize", ScheduleInterval.DAILY, () -> {
+				if (LocalDateTime.now().getDayOfMonth() == 1) {
+					PointsManager.finalizeScores();
+				}
+			});
 		}
 		else if (NeoCore.getInstanceType() == InstanceType.SESSIONS) {
 			Bukkit.getPluginManager().registerEvents(new InstanceListener(), this);
 		}
+		
 	}
 	
 	public void onDisable() {
