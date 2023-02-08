@@ -16,11 +16,16 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
 	private HashMap<PlayerPointType, Double> points = new HashMap<PlayerPointType, Double>();
 	private HashMap<PlayerPointType, Double> contributedPoints = new HashMap<PlayerPointType, Double>();
 	private double contributed;
-	private static double LIMIT = 250;
+	private static HashMap<PlayerPointType, Double> LIMITS = new HashMap<PlayerPointType, Double>();
+	private static final double DEFAULT_LIMIT = 250;
 	private Nation n;
 	private Town t;
 	private NationEntry ne;
 	private TownEntry te;
+	
+	static {
+		LIMITS.put(PlayerPointType.PLAYTIME, 150D);
+	}
 	
 	public PlayerEntry(UUID uuid) {
 		this.uuid = uuid;
@@ -42,7 +47,7 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
 	}
 	
 	public void setContributedPoints(double amount, PlayerPointType type) {
-		contributedPoints.put(type, amount);
+		contributedPoints.put(type, Math.min(amount, LIMITS.getOrDefault(type, DEFAULT_LIMIT)));
 	}
 	
 	public double calculateContributed() {
@@ -69,18 +74,19 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
 		double before = contributedPoints.getOrDefault(type, 0.0D);
 		double after = before + amount;
 		double contributable = 0;
+		double limit = LIMITS.getOrDefault(PlayerPointType.PLAYTIME, DEFAULT_LIMIT);
 		
 		if (amount >= 0) {
 			if (contributed >= PointsManager.getMaxContribution()) {
 				return 0;
 			}
-			else if (before < LIMIT && after > LIMIT) {
-				contributable = LIMIT - before;
-				contributedPoints.put(type, LIMIT);
+			else if (before < limit && after > limit) {
+				contributable = limit - before;
+				contributedPoints.put(type, limit);
 				contributed += contributable;
 				return contributable; // Will be positive
 			}
-			else if (before < LIMIT && after < LIMIT) {
+			else if (before < limit && after < limit) {
 				contributedPoints.put(type, after);
 				contributed += amount;
 				return amount;
@@ -89,13 +95,13 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
 			// before > LIMIT && after < LIMIT not possible
 		}
 		else {
-			if (before > LIMIT && after < LIMIT) {
-				contributable = after - LIMIT;
+			if (before > limit && after < limit) {
+				contributable = after - limit;
 				contributedPoints.put(type, after);
 				contributed += contributable;
 				return contributable; // Will be negative
 			}
-			else if (before < LIMIT && after < LIMIT) {
+			else if (before < limit && after < limit) {
 				contributedPoints.put(type, after);
 				contributed += amount;
 				return amount;
@@ -141,10 +147,6 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
 	
 	public boolean isEmpty() {
 		return points.isEmpty();
-	}
-	
-	public static double getLimit() {
-		return LIMIT;
 	}
 	
 	public Town getTown() {
