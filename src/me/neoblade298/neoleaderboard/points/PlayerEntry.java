@@ -74,7 +74,7 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
 		double before = contributedPoints.getOrDefault(type, 0.0D);
 		double after = before + amount;
 		double contributable = 0;
-		double limit = LIMITS.getOrDefault(PlayerPointType.PLAYTIME, DEFAULT_LIMIT);
+		double limit = LIMITS.getOrDefault(type, DEFAULT_LIMIT);
 		
 		if (amount >= 0) {
 			if (contributed >= PointsManager.getMaxContribution()) {
