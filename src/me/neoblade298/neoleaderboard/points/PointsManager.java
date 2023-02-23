@@ -144,8 +144,10 @@ public class PointsManager implements IOComponent {
 		NationEntry ne = nationEntries.get(nation);
 		deleteTownEntry(ne.getTownEntry(town), deleteFromSql);
 	}
-	
+
+	// deleteFromSql false whenever a bigger delete (IE nation entry) happens that makes it redundant
 	public static void deleteTownEntry(TownEntry te, boolean deleteFromSql) {
+		if (deleteFromSql) te.getNationEntry().removeTown(te.getTown());
 		for (PlayerEntry pe : te.getTopPlayers()) {
 			deletePlayerEntry(pe.getUuid(), false);
 		}
@@ -177,6 +179,7 @@ public class PointsManager implements IOComponent {
 		PlayerEntry pe = playerEntries.get(player);
 		if (pe != null) {
 			pe.prepDelete(); // Clears all references to other objects
+			if (deleteFromSql) pe.getNationEntry().removePlayer(pe, pe.getTown(), pe.getUuid());
 			playerEntries.remove(pe.getUuid());
 		}
 
