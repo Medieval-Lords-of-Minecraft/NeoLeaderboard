@@ -542,6 +542,7 @@ public class PointsManager implements IOComponent {
 				NationEntry winner = sorted.last();
 				Nation n = winner.getNation();
 				BungeeAPI.broadcast("&4[&c&lMLMC&4] &7This month's winner for top nation is: &6&l" + n.getName() + "&7!");
+				prevWinner = n.getName();
 				saveAll();
 				
 				try (Connection con = NeoCore.getConnection("PointsManager");
